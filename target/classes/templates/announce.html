@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link th:href="@{/js/element-ui/index.css}" rel="stylesheet">
+    <title>公告</title>
+</head>
+<body>
+<div id="app">
+    <div style="width: 550px">
+        <h1 style="font-size: 50px">发布公告</h1>
+        <el-form
+                ref="form" :model="form" label-width="80px">
+            <el-form-item label="公告标题">
+                <el-input v-model="form.title"></el-input>
+            </el-form-item>
+
+            <el-form-item label="公告内容">
+                <el-input type="textarea" :rows="5" v-model="form.content"></el-input>
+            </el-form-item>
+
+            <el-form-item label="发布时间">
+                <div class="block">
+                    <el-date-picker
+                            v-model="form.date1"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期">
+                    </el-date-picker>
+                </div>
+            </el-form-item>
+
+            <!--<el-form-item label="接收成员">
+                <el-select v-model="form.class" placeholder="请选择班级">
+                    <el-option label="计算机科学与技术1班" value="计算机科学与技术1班"></el-option>
+                    <el-option label="计算机科学与技术2班" value="计算机科学与技术2班"></el-option>
+                    <el-option label="计算机科学与技术3班" value="计算机科学与技术3班"></el-option>
+                    <el-option label="计算机科学与技术4班" value="计算机科学与技术4班"></el-option>
+                    <el-option label="计算机科学与技术5班" value="计算机科学与技术5班"></el-option>
+                    <el-option label="计算机科学与技术6班" value="计算机科学与技术6班"></el-option>
+                </el-select>
+            </el-form-item>-->
+
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                <el-button>取消</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</div>
+<script th:src="@{/js/vue/vue.js}"></script>
+<script th:src="@{/js/element-ui/index.js}"></script>
+<script th:src="@{/js/axios/axios.js}"></script>
+
+<script>
+
+    Vue.config.productionTip = false
+    new Vue({
+        el: '#app',
+        data: {
+            user:'',
+            form:{
+                title:'',
+                content:'',
+                date1:'',
+            },
+
+        },
+        methods: {
+            checkUser(){
+                axios.post("/boot/jump/checkUser").then(
+                    res => {
+                        this.user = res.data
+                    }
+                )
+            },
+            onSubmit(){
+                console.log(this.form.date1)
+
+                axios.post("/boot/announce/addAnn?"
+                    +"&teaid="+this.user.teaid
+                    +"&createtime="+this.form.date1[0]
+                    +"&endtime="+this.form.date1[1]
+                    +"&title="+this.form.title
+                    +"&content="+this.form.content
+                    +"&classes="+this.user.dep
+                    +"&teaname="+this.user.teaname
+                ).then(
+                    res => {
+                        console.log(res)
+                    }
+                )
+            },
+        },
+        mounted(){
+            this.checkUser()
+        }
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <link th:href="@{/js/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+
+    <style>
+
+    </style>
+
+</head>
+
+<body class="gray-bg" >
+
+<div>
+    <div style="margin-top: 100px ; margin-right: 250px" >
+        <form  class="form-horizontal" role="form" th:action="@{/user/updateAdmin}" method="post" onsubmit="return sumbit_sure()">
+            <div class="form-group">
+                <label for="teaid" class="col-sm-3 control-label">编号</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="teaid"
+                           name="teaid" >
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="teaname" class="col-sm-3 control-label">姓名</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="teaname"
+                           name="teaname" placeholder="输入您的名字">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password1" class="col-sm-3 control-label">旧密码</label>
+                <div class="col-sm-8">
+                    <input type="password" class="form-control"
+                           name="oldPassword" id="password1" autocomplete="off" placeholder="请先正确的输入你的旧密码" onchange="changePassWord()">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password2" class="col-sm-3 control-label">新密码</label>
+                <div class="col-sm-8">
+                    <input type="password" class="form-control"
+                           name="password" id="password2" autocomplete="off" placeholder="请先正确的输入你的旧密码" readonly>
+                </div>
+            </div>
+
+
+            <div class="form-group" th:align="center">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary" >修改</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<!-- 全局js -->
+<script th:src="@{/js/jquery/jquery.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+
+<script>
+    const path = /*[[${#request.getContextPath()}]]*/
+    $(function () {
+            queryData();
+    })
+
+
+    function sumbit_sure(){
+        var gnl=confirm("确定要提交?");
+        if (gnl==true){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    let user ;
+    function queryData() {
+        $.post(
+            "checkUser",
+            msg=>{
+                console.log(msg)
+                user = msg
+                $("#teaid").val(msg.teaid)
+                $("#teaid").attr("readonly","true")
+
+                $("#teaname").val(msg.teaname)
+                $("#password2").val(msg.password)
+            },
+            "json"
+        );
+    }
+    function changePassWord() {
+        let oldpassword = $("#password1").val()
+        if(oldpassword == user.password){
+            $("#password2").removeAttr('readonly');
+        }
+    }
+
+</script>
+
+</body>
+</html>

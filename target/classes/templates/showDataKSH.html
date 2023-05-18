@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <link th:href="@{/js/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.css}" rel="stylesheet">
+
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/plugins/bootstrap-table/bootstrap-table.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datetimepicker.css}">
+    <link rel="stylesheet" th:href="@{/css/jiajian.css}">
+
+    <!--<style>.modal-backdrop{z-index:0;}</style>-->
+
+</head>
+
+<body>
+<div id="app">
+    <div class="row wrapper border-bottom white-bg page-heading" >
+        <div class="col-sm-12">
+            <img th:src="@{/img/head.png}" width="100%" height="300px" >
+        </div>
+    </div>
+    <div id="myEcharts" style="width:100%;height:500px">
+
+    </div>
+</div>
+
+<!--弹出框-->
+
+<!-- 全局js -->
+<script th:src="@{/js/jquery/jquery.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/axios/axios.js}"></script>
+<script th:src="@{/js/vue/vue.js}"></script>
+<script th:src="@{/js/echarts.js}"></script>
+<script>
+    Vue.config.productionTip = false
+    new Vue({
+        el: '#app',
+        data: {
+            selects:{
+                selectTime:'',
+                selectClass:'',
+                selectZY:'',
+            },
+            showData1:{
+                names:["正常","感冒","发烧","呼吸困难"],
+                xDatas:[],
+                datas:[],
+                sum:{},
+            },
+            userdep:'',
+        },
+        methods:{
+            getData(){
+                axios.post("/boot/jump/checkUser").then(
+                    res => {
+                        this.userdep = res.data.dep
+                        console.log(this.userdep)
+                        //查询时间
+                        //感冒的
+                        axios.post('/boot/list/queryKSH?pageSize=30'+"&classes="+this.userdep).then(
+                            res=>{
+                                this.showData1.xDatas = Array.from(new Set(res.data.map(a => a.createtime.substr(5,5))))
+                                this.showData1.sum = res.data.map(a => a.sl)
+                                console.log(this.showData1.xDatas)
+                            }
+                        )
+                        //正常的
+                        axios.post('/boot/list/queryKSH?pageSize=30'+"&classes="+this.userdep+"&conditionsVo=正常").then(
+                            res=>{
+                                /*let zc = res.data.map(a => a.sl)*/
+                                let zc = []
+                                this.showData1.xDatas.forEach( a => {
+                                    var i = 0
+                                    res.data.forEach( b => {
+                                        if (b.createtime.substr(5,5)==a){
+                                            zc.push(b.sl);
+                                            i =1
+                                        }
+                                    })
+                                    if (i==0){
+                                        zc.push(0)
+                                    }
+                                })
+                                console.log(zc)
+                                this.showData1.datas[0] = zc
+                            }
+                        )
+                        //感冒的
+                        axios.post('/boot/list/queryKSH?pageSize=30'+"&classes="+this.userdep+"&conditionsVo=感冒").then(
+                            res=>{
+                                let gm = []
+                                this.showData1.xDatas.forEach( a => {
+                                    var i = 0
+                                    res.data.forEach( b => {
+                                        if (b.createtime.substr(5,5)==a){
+                                            gm.push(b.sl);
+                                            i =1
+                                        }
+                                    })
+                                    if (i==0){
+                                        gm.push(0)
+                                    }
+                                })
+                                this.showData1.datas[1] = gm
+                            }
+                        )
+                        //fs的
+                        axios.post('/boot/list/queryKSH?pageSize=30'+"&classes="+this.userdep+"&conditionsVo=发烧").then(
+                            res=>{
+                                let fs = []
+                                this.showData1.xDatas.forEach( a => {
+                                    var i = 0
+                                    res.data.forEach( b => {
+                                        if (b.createtime.substr(5,5)==a){
+                                            fs.push(b.sl);
+                                            i =1
+                                        }
+                                    })
+                                    if (i==0){
+                                        fs.push(0)
+                                    }
+                                })
+                                this.showData1.datas[2] = fs
+                            }
+                        )
+                        //hxkn的
+                        axios.post('/boot/list/queryKSH?pageSize=30'+"&classes="+this.userdep+"&conditionsVo=呼吸困难").then(
+                            res=>{
+                                let hxkn = []
+                                this.showData1.xDatas.forEach( a => {
+                                    var i = 0
+                                    res.data.forEach( b => {
+                                        if (b.createtime.substr(5,5)==a){
+                                            hxkn.push(b.sl);
+                                            i =1
+                                        }
+                                    })
+                                    if (i==0){
+                                        hxkn.push(0)
+                                    }
+                                })
+                                this.showData1.datas[3] = hxkn
+                            }
+                        )
+
+
+                    })
+            },
+            initChart(){
+                this.getData()
+                var myChart = echarts.init(document.getElementById('myEcharts'));
+                setTimeout(()=>{
+                    let option = {
+                        title: {
+                            text: "学生健康信息数据可视化",
+                            left: 50, //设置标题的距离盒子左边的距离
+                            top: 10 //设置标题距离盒子顶部的距离
+                        },
+                        /* 设置提示框 */
+                        tooltip: {
+                            /* 显示提示信息 item:图形触发 axis:坐标轴触发 none:不触发 */
+                            trigger: 'axis',
+                            /* 坐标轴指示器 type:属性 line shadow cross none */
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        /* 设置图例 */
+                        legend: {
+                            /* 注意此处必须与数据系列series中的name属性一一对应 */
+                            data: this.showData1.names,
+                            bottom:'bottom',
+                        },
+                        /* 设置y轴，注意如果是水平的柱状图，则交换x轴 y轴即可 */
+                        yAxis: {
+                            /* value表示具体的值 */
+                            type: 'value'
+                        },
+                        /* 设置x轴 */
+                        xAxis: {
+                            /* category表示类别 */
+                            type: 'category',
+                            /* x轴上显示的数据 */
+                            data: this.showData1.xDatas
+                        },
+                        /* 数据系列 */
+                        series: [
+                            {
+                                /* 此处必须一一对应图例legend中的值 */
+                                name: this.showData1.names[0],
+                                /* bar表示柱状 如果是 line则表示折线 */
+                                type: 'bar',
+                                /* 设置此参数开启堆叠，如果无此参数，则无堆叠效果，凡是此参数一样的
+                                数据都会堆叠，叫什么无所谓，但是要保持一致 */
+                                stack: '总量',
+                                /* 设置柱状图上每段柱子是否显示具体数据 */
+                                label: {
+                                    /* 显示数据 */
+                                    show: true,
+                                    /* 在柱子内部显示 还可以书写 top right left bottom */
+                                    position: 'inside'
+                                },
+                                data: this.showData1.datas[0],
+                                itemStyle:{
+                                    normal:{
+                                        color: '#6AB0B8'
+                                    }
+                                }
+                            },
+                            {
+                                name: this.showData1.names[1],
+                                type: 'bar',
+                                stack: '总量',
+                                label: {
+                                    show: true,
+                                    position: 'inside'
+                                },
+                                data: this.showData1.datas[1],
+                                itemStyle:{
+                                    normal:{
+                                        color: '#334B5C'
+                                    }
+                                }
+                            },
+                            {
+                                name: this.showData1.names[2],
+                                type: 'bar',
+                                stack: '总量',
+                                label: {
+                                    show: true,
+                                    position: 'inside'
+                                },
+                                data: this.showData1.datas[2],
+                                itemStyle:{
+                                    normal:{
+                                        color: '#E98F6F'
+                                    }
+                                }
+                            },
+                            {
+                                name: this.showData1.names[3],
+                                type: 'bar',
+                                stack: '总量',
+                                label: {
+                                    show: true,
+                                    position: 'inside'
+                                },
+                                data: this.showData1.datas[3],
+                                itemStyle:{
+                                    normal:{
+                                        color: '#DD001B'
+                                    }
+                                }
+                            },
+
+                        ]
+                    }
+                    myChart.setOption(option)
+                },1000)
+
+            }
+        },
+        mounted(){
+            this.initChart();
+        }
+    })
+</script>
+
+
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <link th:href="@{/js/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.css}" rel="stylesheet">
+
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/plugins/bootstrap-table/bootstrap-table.min.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-datetimepicker.css}">
+    <link rel="stylesheet" th:href="@{/css/jiajian.css}">
+
+    <!--<style>.modal-backdrop{z-index:0;}</style>-->
+
+</head>
+
+<body>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <img th:src="@{/img/head.png}" width="100%" height="300px" >
+    </div>
+</div>
+<!--成功或者失败-->
+<div id="show1" class="alert alert-success" role="alert" style="display: none;font-size: 25px" align="center">
+    <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <strong>添加成功</strong>
+    二级管理员账号添加成功！
+    <br>
+    <!--<a onclick="queryByCondition()"  target="et"  class="alert-link J_menuItem">点击这里刷新数据</a>-->
+</div>
+<div id="show2" class="alert alert-danger" role="alert" style="display: none;font-size: 25px" align="center">
+    <strong>添加失败</strong>
+    此账号已存在，禁止重复添加！
+</div>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    条件检索
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+                <div class="form-group">
+                        <label>管理员级别:</label>
+                        <select class="form-control" id="select_level" name="level" onchange="changeLevel()">
+                            <option value="2" selected>2级管理员</option>
+                            <option value="3">3级管理员</option>
+                        </select>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--条件检索结束-->
+<button type="button" id="addone"   class="btn btn-info" onclick="addAdmin()">新增管理员</button>
+<!--新增模态框-->
+<div class="modal fade" id="mymodal" tabindex="-1" role="dialog" data-backdrop="false" data-keyboard="false"
+     aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="exampleModalLabel">新增管理员</h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">新增</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <!--action="/boot/list/addData"-->
+                <form method="post" class="form-horizontal" role="form" id="addData">
+
+                    <!--<input type="text" id="number" name="number" hidden="hidden">
+
+                    <input type="text" id="name" name="name" hidden="hidden">-->
+
+
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">管理员编号</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="teaid" name="teaid" required placeholder="输入管理员编号">
+                        </div>
+                    </div>
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">管理员姓名</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="teaname" name="teaname" required placeholder="输入管理员姓名">
+                        </div>
+                    </div>
+
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">手机号码</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="phone" name="phone" required placeholder="输入管理员的手机号码">
+                        </div>
+                    </div>
+
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">所属学院</label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="dep" name="dep" required placeholder="输入管理员的管辖院系">
+                        </div>
+                    </div>
+
+
+                    <div align="center">
+                        <button type="button" class="btn btn-primary" onclick="addOne()">新增</button>
+                        <button type="reset" class="btn btn-info">重置</button>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!--新增模态框结束-->
+
+
+
+<!--开始表格-->
+
+<div class="table-responsive">
+    <table id="tb">
+
+    </table>
+
+</div>
+<!--结束表格-->
+
+<!-- 全局js -->
+<script th:src="@{/js/jquery/jquery.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/jquery/jquery.validate.min.js}"></script>
+<script th:src="@{/js/jquery/messages_zh.min.js}"></script>
+<script th:src="@{/js/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/axios/axios.js}"></script>
+<script th:src="@{/js/plugins/bootstrap-table/bootstrap-table.min.js}"></script>
+<script th:src="@{/js/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.js}"></script>
+
+
+<script>
+    const path = /*[[${#request.getContextPath()}]]*/
+        $(function () {
+            checkUser()
+            queryData()
+        })
+
+
+
+    function addOne(){
+        var teaid = $("#teaid").val();
+        var teaname = $("#teaname").val();
+        var phone = $("#phone").val();
+        var dep = $("#dep").val();
+
+        axios.get('/boot/user/addAdmin2?'+"teaid="+teaid+"&teaname="+teaname+"&phone="+phone+"&dep="+dep).then(
+            res =>{
+                console.log(res)
+                $("#mymodal").modal('hide');
+                if(res.data == 'success'){
+                    $('#show1').slideDown().delay(30000).slideUp(300);
+                }else if(res.data == 'fail'){
+                    $('#show2').slideDown().delay(4000).slideUp(300);
+                }
+                /*if(res.data == 'success'){
+                    $("#mymodal").modal('hide');
+                    $('#show1').slideDown().delay(30000).slideUp(300);
+                }
+                if(res.data == 'fail'){
+                    $("#mymodal").modal('hide');
+                    $('#show2').slideDown().delay(4000).slideUp(300);
+                }*/
+            }
+        ).catch(error => {
+
+        })
+    }
+    
+    //接收用户的身份信息
+    function checkUser() {
+        $.post(
+            "/boot/jump/checkUser",
+            msg=>{
+                console.log(msg)
+            },
+            "json"
+        );
+    }
+
+    /*展开模态框动作*/
+    function addAdmin() {
+        $("#mymodal").modal("show");
+    }
+
+    function changeLevel() {
+        $("#tb").bootstrapTable("destroy")
+        queryData()
+        $("#tb").bootstrapTable("refresh")
+    }
+
+    function queryData() {
+        $("#tb").bootstrapTable({
+            method:"post",//表示以post的方式提交请求，默认参数是json格式
+            //contentType:默认application/json 改成 application/x-www-form-urlencoded
+            contentType:"application/x-www-form-urlencoded",
+            url:"/boot/user/queryAllAdmin",
+            pagination:true,//是否分页  默认 不分
+            cache: false,                       //是否使用缓存，默认为true，所以一般情况下需要设置一下这个属性（*）
+            showToggle:true,                   //是否显示详细视图和列表视图的切换按钮
+            showRefresh: true,     //是否显示刷新按钮
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            toolbarAlign:'left',//工具栏的位置
+            //search: true,                      //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以，个人感觉意义不大
+            //默认client：客户端分页  假分页  按需显示  server：服务器分页  真分页  按需提取
+            sidePagination:"server",//哪里分页 服务器还是前端  这里是服务器
+            pageNumber:1,//从第几页开始查询   默认1
+            pageSize:5,//每页显示的记录数  默认10
+            pageList:[3,5,8,10],
+            //limit: 默认表示往后台发出的参数是 limit+offset   (limiy==pageSize + offset==start)
+            //undefiend:表示往后台发的参数变成了  pageNumber+pageSize
+            queryParamsType:"undefined",
+
+            sortOrder:'desc',
+            /*sortable: true,      //是否启用排序
+            sortOrder: "desc", //排序方式*/
+            queryParams:function (params) {   //该方法中可以修改默认的参数 （加条件）
+                start = (params.pageNumber-1)*params.pageSize;
+                console.log(start);
+                params.level = $("#select_level").val()
+                /*let startDateVo = $("#select_startDate").val();
+                let endDateVo = $("#select_endDate").val();
+                let conditionsVo = $("#select_conditions").val();
+                if (startDateVo != '' && endDateVo != '' ){params.endDateVo = endDateVo,params.startDateVo = startDateVo}
+                if (endDateVo != '' && startDateVo == '' ){params.endDateVo = endDateVo,params.startDateVo = '1999-1-1'}
+                if (startDateVo != '' && endDateVo == '' ){params.endDateVo = '2099-1-1',params.startDateVo = startDateVo}
+                if (conditionsVo != '' && conditionsVo != '-1'){params.conditionsVo = conditionsVo}*/
+
+                console.log(params);
+                return params;
+            },
+            columns:[
+                {
+                    title:"编号",
+                    field:"id",
+                    formatter:function (value,row,index) {
+                        return start+index+1;
+                    }
+                },
+                {
+                    title:"账号",
+                    field:"teaid",
+                },
+                {
+                    title:"姓名",
+                    field:"teaname",
+
+                },
+                {
+                    title:"学院",
+                    field:"dep",
+
+                }, {
+                    title:"手机号码",
+                    field:"phone",
+                },
+            ]
+        });
+    }
+
+</script>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wk.yqfk.mapper.DataMapper">
+    <insert id="addData" parameterType="User">
+        insert into yqfk_user (id,number,name,idcard,phone,conditions,
+        del,temperature,address,address_now,createtime,iswailai,intime,zhuangtai)
+        values (
+            null,
+            #{number},
+            #{name},
+            #{idcard},
+            #{phone},
+            #{conditions},
+            0,
+            #{temperature},
+            #{address},
+            #{address_now},
+            now(),
+            #{iswailai},
+            #{intime},
+            #{zhuangtai}
+        )
+    </insert>
+
+
+    <select id="checktianbao" parameterType="String" resultType="User">
+        select * from yqfk_user where number = #{number} and createtime = #{today}
+    </select>
+
+
+
+    <select id="queryDateList" parameterType="UserVo" resultType="User">
+            select * from yqfk_user where 1=1
+        <if test="userVo.numberVo != null ">
+            AND number =#{userVo.numberVo}
+        </if>
+        <if test="list != null and list != {}">
+            AND number in
+            <foreach item="list" collection="list" separator="," open="(" close=")" index="">
+            #{list}
+            </foreach>
+        </if>
+        <if test="userVo.nameVo != null ">
+            AND name like "%"#{userVo.nameVo}"%"
+        </if>
+        <if test="userVo.nameVo != null  ">
+            AND name like "%"#{userVo.nameVo}"%"
+        </if>
+        <if test="userVo.conditionsVo != null and userVo.conditionsVo != '-1'">
+
+                AND conditions =#{userVo.conditionsVo}
+
+        </if>
+        <if test="userVo.startDateVo != null and userVo.startDateVo != ''">
+            AND createtime >= #{userVo.startDateVo}
+        </if>
+        <if test="userVo.endDateVo != null and userVo.endDateVo != ''">
+            AND createtime &lt;= #{userVo.endDateVo}
+        </if>
+        and del = 0
+        order by createtime desc
+    </select>
+
+
+
+    <update id="update" parameterType="User">
+        update yqfk_user set phone = #{phone} , conditions = #{conditions} , temperature = #{temperature} , intime = #{s_intime},
+        zhuangtai = #{zhuangtai}
+        where id = #{id}
+    </update>
+
+
+
+
+    <select id="queryClasses" resultType="String">
+        select classes from yqfk_student where number != '0000' group by classes
+    </select>
+
+    <select id="queryStuData" parameterType="StuVo" resultType="Student">
+        select * from yqfk_student where number != "0000" and status = 1
+        <if test="numberVo != null and numberVo != '0000' ">
+            AND number =#{numberVo}
+        </if>
+        <if test="classesVo != null and classesVo != ''">
+            AND classes =#{classesVo}
+        </if>
+    </select>
+
+    <update id="del" parameterType="String">
+        update yqfk_user set del =  1 where id =#{id}
+    </update>
+
+    <update id="updateStu" parameterType="Student">
+        update yqfk_student set name = #{name} , classes = #{classes} , address = #{address}
+        where number = #{number}
+    </update>
+
+    <update id="delStu" parameterType="String">
+        update yqfk_student set status = 0 where number = #{number}
+    </update>
+
+    <select id="queryNumberByDep" parameterType="String" resultType="String">
+        select number from yqfk_student where classes = #{classesVo}
+    </select>
+
+    <select id="queryDateListKSH" parameterType="String" resultType="map">
+        SELECT createtime, count(*) as sl FROM `yqfk_user` where 1=1
+        <if test="list != null and list != {}">
+            AND number in
+            <foreach item="list" collection="list" separator="," open="(" close=")" index="">
+                #{list}
+            </foreach>
+        </if>
+
+        <if test="conditionsVo != null and conditionsVo != '-1'">
+
+            AND conditions =#{conditionsVo}
+
+        </if>
+        and del = 0
+        GROUP BY createtime ORDER BY createtime DESC
+    </select>
+
+    <select id="queryStuNumberByClassList" parameterType="String" resultType="String">
+        SELECT number FROM `yqfk_student` where status = 1
+
+        AND classes in
+        <foreach item="list" collection="list" separator="," open="(" close=")" index="">
+            #{list}
+        </foreach>
+
+
+    </select>
+
+</mapper>

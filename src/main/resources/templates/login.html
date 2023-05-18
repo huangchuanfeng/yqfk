@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link th:href="@{/js/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <title>首页</title>
+    <style>
+        body{
+            background-image: url('[[@{/}]]img/log_bj.png');
+            margin-top: 100px;
+        }
+        .login-form {
+
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: saturate(150%) blur(2px);
+            -webkit-backdrop-filter: saturate(150%) contrast(50%) blur(4px);
+            background-image: linear-gradient(
+                    196deg,
+                    hsla(0, 0%, 100%, 0.1),
+                    hsla(0, 0%, 100%, 0) 23%,
+                    hsla(0, 0%, 100%, 0) 62%,
+                    hsla(0, 0%, 100%, 0.3)
+            );
+
+
+            height: 300px;
+            width: 400px;
+            margin: 10px auto;
+            padding: 50px 10px 10px 40px;
+            border: 1px solid;
+            border-radius: 15px;
+            box-shadow: 0px 0px 20px #c6c6c6;
+
+            opacity:100%;
+        }
+    </style>
+</head>
+<body>
+<div class="login-form" id="formDiv" hidden="hidden">
+    <form class="form-horizontal" role="form" th:action="@{/user/login}" method="post">
+        <div class="form-group">
+            <label for="number" class="col-sm-3 control-label">账号</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="number"
+                       name="number" placeholder="输入您的账号">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password" class="col-sm-3 control-label">密码</label>
+            <div class="col-sm-8">
+                <input type="password" class="form-control"
+                       name="password" id="password" placeholder="输入您的密码">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="code" class="col-sm-3 control-label">
+                <img id="codeImg" th:src="@{/code}" >
+            </label>
+            <span th:if="${error ne null}" th:text="${error}" style="margin-left: 20px;color: red"></span>
+
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="code"
+                       name="code" placeholder="验证码">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <div class="checkbox">
+                    <label>
+                        <input type="radio" name="isadmin" value="1"> 以管理员账号登录
+                        <input type="radio" name="isadmin" value="2" checked hidden>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">登录</button>
+                <a type="button" class="btn btn-info" href="/boot/user/toReg">注册</a>
+                <input type="reset" class="btn btn-default"  value="重置">
+            </div>
+        </div>
+    </form>
+
+
+</div>
+<div class="jumbotron" id="jumbotronDiv">
+    <div class="container">
+        <h1>Hello !</h1>
+        <p class="lead">轻智理校园健康管理平台，可实时进行学生身份管理、健康信息填报、出行报备登记、公告发布等相关操作，
+            旨在通过信息化管理手段，全面监测统计学生健康状况和出行信息，实现学生健康情况的实时管理。建立“学校-教师-学生”实时互通的一体化管理机制。</p>
+        <li>采集学生身份信息</li>
+        <li>学生健康信息填报</li>
+        <li>健康信息动态可视化</li>
+        <li>学生出行信息报备</li>
+        <li>教师实时管理</li>
+        <br>
+        <p><a class="btn btn-primary btn-lg" onclick="showDiv()" role="button">Let's start !</a></p>
+    </div>
+</div>
+<script th:src="@{/js/jquery/jquery.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/bootstrap/js/bootstrap.min.js}" type="text/javascript"></script>
+<script th:src="@{/js/axios/axios.js}"></script>
+<script th:src="@{/js/vue/vue.js}"></script>
+<script th:inline="javascript">
+    const path = /*[[${#request.getContextPath()}]]*/
+        $(function () {
+            $('#codeImg').click(function () {
+                $('#codeImg').attr('src',path+'/code?date='+new Date())
+            })
+        })
+    function showDiv(){
+        $("#formDiv").slideDown('slow','linear',)
+        $("#jumbotronDiv").slideUp('slow','swing',)
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.wk.yqfk.mapper.UserMapper">
+    <select id="getStu" parameterType="string" resultType="Student">
+        select
+        number, password, name, address,classes
+        from yqfk_student
+        where number = #{number}
+        and password = #{password}
+        and status = 1
+    </select>
+
+    <insert id="addStu" parameterType="com.wk.yqfk.bean.Student">
+        insert into yqfk_student(`number`, `name`, `password`, `address`, `status`, `classes`) values(
+            #{number},
+            #{name},
+            #{password},
+            #{address},
+            1,
+            #{classes}
+        )
+    </insert>
+
+
+    <select id="checkNumber" parameterType="String" resultType="Student">
+        select
+        number, password, name, address,classes
+        from yqfk_student
+        where number = #{number}
+        and status = 1
+    </select>
+
+
+    <update id="updateStu" parameterType="Student">
+        update yqfk_student set password = #{password} ,name = #{name},
+         classes = #{classes}
+          where number = #{number}
+    </update>
+
+    <insert id="addAdmin2" parameterType="com.wk.yqfk.bean.Teacher">
+        insert into teacher(`teaid`, `teaname`, `phone`, `dep`, `bossid`,`level`,`del`,`password`) values(
+            #{teaid},
+            #{teaname},
+            #{phone},
+            #{dep},
+            #{bossid},
+            #{level},
+            #{del},
+            #{password}
+        )
+    </insert>
+
+    <select id="queryTea" parameterType="String" resultType="Teacher">
+        select
+        *
+        from teacher
+        where teaid = #{teaid}
+        and del = 0
+    </select>
+    <select id="getTea" parameterType="String" resultType="Teacher">
+        select
+        *
+        from teacher
+        where teaid = #{teaid} and password = #{password}
+        and del = 0
+    </select>
+
+    <select id="queryAllDep"  resultType="Dep">
+        select
+        *
+        from dep
+    </select>
+
+    <select id="queryClassesByDep" parameterType="String" resultType="Classes">
+        select
+        *
+        from classes
+        where dep = #{dep}
+    </select>
+
+    <update id="updateTea" parameterType="Teacher">
+        update teacher set password = #{password} ,teaname = #{teaname}
+          where teaid = #{teaid}
+    </update>
+
+
+    <select id="queryAllAdmin" parameterType="String" resultType="Teacher">
+        select
+        *
+        from teacher
+        where level = #{level}
+        and del = 0
+    </select>
+    <select id="queryTeaByClass" parameterType="String" resultType="Teacher">
+        select
+        *
+        from teacher
+        where dep = #{value}
+        and del = 0
+    </select>
+
+
+</mapper>
+

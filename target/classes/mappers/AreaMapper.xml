@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wk.yqfk.mapper.AreaMapper">
+    <select id="querySheng" resultType="area">
+        select * from locations where pid = -1
+    </select>
+
+    <select id="queryShi" resultType="area" parameterType="string">
+        select * from locations where pid = (select id from locations l  where pid =-1 and name = #{value})
+    </select>
+
+
+    <select id="queryQu" resultType="area" parameterType="string">
+        select * from locations where pid = (select id from locations l  where name = #{value} and ltype = '市')
+    </select>
+</mapper>

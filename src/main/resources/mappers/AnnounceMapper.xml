@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wk.yqfk.mapper.AnnounceMapper">
+    <select id="queryAllAnn" resultType="Announce">
+        select * from announce where del = 0
+    </select>
+    <select id="queryAllTrip" resultType="Trip">
+        select * from trip
+    </select>
+    <select id="queryAnnounceByClasses" parameterType="String" resultType="Announce">
+        select * from announce
+        where res = '通过'
+        and classes = #{classes}
+        and #{date} >= createtime
+        and #{date} &lt;= endtime
+        Order by createtime desc
+    </select>
+    <select id="queryDepByClass" parameterType="String" resultType="String">
+        select dep from classes
+        where classname = #{classes}
+    </select>
+
+    <select id="queryTeaByDep" parameterType="String" resultType="String">
+        select teaid from teacher
+        where dep = #{dep}
+    </select>
+
+    <insert id="addAnn" parameterType="com.wk.yqfk.bean.Announce">
+        insert into announce(`id`,`teaid`, `teaname`, `checkid`, `classes`, `createtime`,`endtime`,`del`,`res`,`content`,`title`) values(
+            null,
+            #{teaid},
+            #{teaname},
+            #{checkid},
+            #{classes},
+            #{createtime},
+            #{endtime},
+            #{del},
+            #{res},
+            #{content},
+            #{title}
+        )
+    </insert>
+
+    <select id="queryAnnByCheckid" parameterType="String" resultType="Announce">
+        select * from announce
+        where checkid = #{checkid} and del =0
+    </select>
+
+    <update id="updateAnn" parameterType="String">
+        update announce set res = #{res}
+          where id = #{id}
+    </update>
+
+    <update id="delAnn" parameterType="String">
+        update announce set del = 1
+          where id = #{id}
+    </update>
+    <insert id="addTrip" parameterType="com.wk.yqfk.bean.Trip">
+        insert into trip(`number`,`teaid`, `teaname`, `stuid`, `classes`, `createtime`,`endtime`,`status`,`phone`,`danphone`,`reason`,
+        `sheng`,`shi`,`qu`,`home`,`danger`,`stuname`) values(
+            null,
+            #{teaid},
+            #{teaname},
+            #{stuid},
+            #{classes},
+            #{createtime},
+            #{endtime},
+            #{status},
+            #{phone},
+            #{danphone},
+            #{reason},
+            #{sheng},
+            #{shi},
+            #{qu},
+            #{home},
+            #{danger},
+            #{stuname}
+        )
+    </insert>
+    <select id="queryAllTripByTJ" parameterType="Trip" resultType="Trip">
+        select * from trip
+        where 1=1
+        <if test="stuid != null and stuid != '' ">
+            and stuid = #{stuid}
+        </if>
+        <if test="teaid != null and teaid != '' ">
+            and teaid = #{teaid}
+        </if>
+        <if test="status != null and status != '' ">
+            and status = #{status}
+        </if>
+        order by number desc
+
+    </select>
+    <delete id="delTrip" parameterType="Trip">
+        delete from trip
+          where number = #{number}
+    </delete>
+    <update id="updateTrip" parameterType="Trip">
+        update trip set status = #{status}
+        <if test="rereason != null and rereason != '' ">
+            ,rereason = #{rereason}
+        </if>
+        <if test="rereason == null or rereason == '' ">
+            ,rereason = ''
+        </if>
+          where number = #{number}
+    </update>
+    <select id="queryClassByDep" parameterType="String" resultType="String">
+        select classname from classes
+        where 1=1
+        and dep = #{value}
+    </select>
+    <select id="queryTeaByClassList" parameterType="String" resultType="String">
+        select teaid from teacher
+        where del = 0
+        and dep in
+        <foreach item="a" collection="list" separator="," open="(" close=")" index="">
+            #{a}
+        </foreach>
+    </select>
+
+    <select id="queryAllTripByTJ2" parameterType="String" resultType="Trip">
+        select * from trip
+        where 1 = 1
+        and teaid in
+        <foreach item="a" collection="list" separator="," open="(" close=")" index="">
+            #{a}
+        </foreach>
+        and status in ('三级管理员通过','二级管理员通过','二级管理员拒绝')
+    </select>
+</mapper>

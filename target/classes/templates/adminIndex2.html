@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+
+    <title>首页</title>
+
+    <!--[if lt IE 9]>
+    <meta http-equiv="refresh" content="0;ie.html" />
+    <![endif]-->
+
+    <link rel="shortcut icon" th:href="@{/favicon.ico}">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+<div id="wrapper">
+    <!--左侧导航开始-->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="nav-close"><i class="fa fa-times-circle"></i>
+        </div>
+        <div class="sidebar-collapse">
+            <ul class="nav" id="side-menu">
+                <li class="nav-header">
+                    <div class="dropdown profile-element">
+                        <span><img alt="image" class="img-circle" th:src="@{/img/guan2.jpg}" /></span>
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+                               <span class="block m-t-xs"><strong class="font-bold" id="strongName"></strong></span>
+                                <span class="text-muted text-xs block" id="span1"><b class="caret"></b></span>
+                                </span>
+                        </a>
+                        <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                            <li><a class="J_menuItem" th:href="@{/jump/updateData1}">修改资料</a>
+                            </li>
+                            <li><a class="J_menuItem" th:href="@{/jump/contacts}">联系我们</a>
+                            </li>
+                            <!--<li><a class="J_menuItem" href="mailbox.html">信箱</a>
+                            </li>-->
+                            <li class="divider"></li>
+                            <li><a th:href="@{/user/toLogin}">安全退出</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-home"></i>
+                        <span class="nav-label">公告管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a target="et" class="J_menuItem" th:href="@{/jump/toAnnounceList}" data-index="0">公告列表</a>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-home"></i>
+                        <span class="nav-label">身份信息管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a target="et" class="J_menuItem" th:href="@{/jump/toManageAdmin3}" data-index="0">身份信息管理</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <i class="fa fa fa-bar-chart-o"></i>
+                        <span class="nav-label">学生健康情况统计</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a target="et" class="J_menuItem" th:href="@{/jump/toGLStu}" data-index="0">填报信息详情
+                                <span class="label label-danger pull-right">推荐</span></a>
+                        </li>
+                        <li>
+                            <a target="et" class="J_menuItem" th:href="@{/jump/toShowData}" data-index="0">健康信息可视化
+                                <span class="label label-danger pull-right">推荐</span></a>
+                        </li>
+                    </ul>
+                </li>
+
+
+
+                <li>
+                    <a href="#">
+                        <i class="fa fa fa-bar-chart-o"></i>
+                        <span class="nav-label">实时数据展示</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a target="et" class="J_menuItem" th:href="@{/jump/toEcharsData}" data-index="0">累计确诊数量可视化
+                            </a>
+                        </li>
+                        <li>
+                            <a target="et" class="J_menuItem" href="https://voice.baidu.com/act/newpneumonia/newpneumonia">实时数据展示(百度提供)</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <i class="fa fa fa-bar-chart-o"></i>
+                        <span class="nav-label">学生出行信息管理</span>
+                        <span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li>
+                            <a target="et" class="J_menuItem" th:href="@{/jump/tochecktrip2}" data-index="0">学生出行审核
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+    <!--左侧导航结束-->
+    <!--右侧部分开始-->
+
+    <div id="page-wrapper" class="gray-bg dashbard-1" >
+
+
+        <div class="row content-tabs">
+            <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i>
+            </button>
+            <nav class="page-tabs J_menuTabs">
+                <div class="page-tabs-content">
+                    <a href="javascript:;" class="active J_menuTab" data-id="welcome.html">首页</a>
+                </div>
+            </nav>
+            <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
+            </button>
+            <div class="btn-group roll-nav roll-right">
+                <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span>
+
+                </button>
+                <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                    <li class="J_tabShowActive"><a>定位当前选项卡</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li class="J_tabCloseAll"><a>关闭全部选项卡</a>
+                    </li>
+                    <li class="J_tabCloseOther"><a>关闭其他选项卡</a>
+                    </li>
+                </ul>
+            </div>
+            <a href="/boot/user/toLogin" class="roll-nav roll-right J_tabExit"><i class="fa fa fa-sign-out"></i> 退出</a>
+        </div>
+        <div class="row J_mainContent" id="content-main">
+            <iframe class="J_iframe"  name="et" width="100%" height="100%" th:src="@{/jump/welcome}" data-id="welcome.html"
+                    frameborder="0" ></iframe>
+        </div>
+        <div class="footer" >
+            <div class="pull-right">&copy; 2022-2023 <a href="#">轻智理</a>
+            </div>
+        </div>
+    </div>
+
+    <!--右侧部分结束-->
+    <!--mini聊天窗口开始-->
+    <div class="small-chat-box fadeInRight animated">
+
+        <div class="heading" draggable="true">
+            <small class="chat-date pull-right">
+                2020.12.15
+            </small> 与智能机器人聊天中
+        </div>
+
+        <div class="content">
+
+            <div class="left">
+                <div class="author-name">
+                    Huang-cf <small class="chat-date">
+                    10:02
+                </small>
+                </div>
+                <div class="chat-message active">
+                    你好
+                </div>
+
+            </div>
+            <div class="right">
+                <div class="author-name">
+                    游客
+                    <small class="chat-date">
+                        11:24
+                    </small>
+                </div>
+                <div class="chat-message">
+                    你好，请问我可以换掉这个丑陋的头像吗？
+                </div>
+            </div>
+            <div class="left">
+                <div class="author-name">
+                    Huang-cf
+                    <small class="chat-date">
+                        11:45
+                    </small>
+                </div>
+                <div class="chat-message active">
+                    可以的
+                </div>
+            </div>
+            <div class="right">
+                <div class="author-name">
+                    游客
+                    <small class="chat-date">
+                        11:48
+                    </small>
+                </div>
+                <div class="chat-message">
+                    那要怎么更换呢？
+                </div>
+            </div>
+            <div class="left">
+                <div class="author-name">
+                    Huang-cf
+                    <small class="chat-date">
+                        11:51
+                    </small>
+                </div>
+                <div class="chat-message active">
+                    等我们把这个功能做出来的时候吧！
+                </div>
+            </div>
+            <div class="right">
+                <div class="author-name">
+                    游客
+                    <small class="chat-date">
+                        12:24
+                    </small>
+                </div>
+                <div class="chat-message">
+                    ？？？
+                    <br>
+                    那你们有什么功能呢？
+                </div>
+            </div>
+            <div class="left">
+                <div class="author-name">
+                    Huang-cf
+                    <small class="chat-date">
+                        12:51
+                    </small>
+                </div>
+                <div class="chat-message active">
+                    1.采集学生身份信息
+                    <br>2.学生健康信息填报
+                    <br>3.教师实时管理
+                    <br>4.。。。
+                </div>
+            </div>
+        </div>
+        <div class="form-chat">
+            <div class="input-group input-group-sm">
+                <input type="text" class="form-control"> <span class="input-group-btn"> <button
+                    class="btn btn-primary" type="button">发送
+                </button> </span>
+            </div>
+        </div>
+
+    </div>
+    <div id="small-chat">
+        <span class="badge badge-warning pull-right">5</span>
+        <a class="open-small-chat">
+            <i class="fa fa-comments"></i>
+
+        </a>
+    </div>
+    <!--mini聊天窗口结束-->
+
+
+</div>
+
+<!-- 全局js -->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+<script th:src="@{/js/plugins/layer/layer.min.js}"></script>
+
+<!-- 自定义js -->
+<script th:src="@{/js/hplus.js}"></script>
+<script type="text/javascript" th:src="@{/js/contabs.js}"></script>
+
+<!-- 第三方插件 -->
+<script th:src="@{/js/plugins/pace/pace.min.js}"></script>
+
+<script>
+
+    const path = /*[[${#request.getContextPath()}]]*/
+        $(function () {
+
+            queryData();
+
+            //计算元素集合的总宽度
+            function calSumWidth(elements) {
+                var width = 0;
+                $(elements).each(function () {
+                    width += $(this).outerWidth(true);
+                });
+                return width;
+            }
+            //滚动到指定选项卡
+            function scrollToTab(element) {
+                var marginLeftVal = calSumWidth($(element).prevAll()), marginRightVal = calSumWidth($(element).nextAll());
+                // 可视区域非tab宽度
+                var tabOuterWidth = calSumWidth($(".content-tabs").children().not(".J_menuTabs"));
+                //可视区域tab宽度
+                var visibleWidth = $(".content-tabs").outerWidth(true) - tabOuterWidth;
+                //实际滚动宽度
+                var scrollVal = 0;
+                if ($(".page-tabs-content").outerWidth() < visibleWidth) {
+                    scrollVal = 0;
+                } else if (marginRightVal <= (visibleWidth - $(element).outerWidth(true) - $(element).next().outerWidth(true))) {
+                    if ((visibleWidth - $(element).next().outerWidth(true)) > marginRightVal) {
+                        scrollVal = marginLeftVal;
+                        var tabElement = element;
+                        while ((scrollVal - $(tabElement).outerWidth()) > ($(".page-tabs-content").outerWidth() - visibleWidth)) {
+                            scrollVal -= $(tabElement).prev().outerWidth();
+                            tabElement = $(tabElement).prev();
+                        }
+                    }
+                } else if (marginLeftVal > (visibleWidth - $(element).outerWidth(true) - $(element).prev().outerWidth(true))) {
+                    scrollVal = marginLeftVal - $(element).prev().outerWidth(true);
+                }
+                $('.page-tabs-content').animate({
+                    marginLeft: 0 - scrollVal + 'px'
+                }, "fast");
+            }
+            //查看左侧隐藏的选项卡
+            function scrollTabLeft() {
+                var marginLeftVal = Math.abs(parseInt($('.page-tabs-content').css('margin-left')));
+                // 可视区域非tab宽度
+                var tabOuterWidth = calSumWidth($(".content-tabs").children().not(".J_menuTabs"));
+                //可视区域tab宽度
+                var visibleWidth = $(".content-tabs").outerWidth(true) - tabOuterWidth;
+                //实际滚动宽度
+                var scrollVal = 0;
+                if ($(".page-tabs-content").width() < visibleWidth) {
+                    return false;
+                } else {
+                    var tabElement = $(".J_menuTab:first");
+                    var offsetVal = 0;
+                    while ((offsetVal + $(tabElement).outerWidth(true)) <= marginLeftVal) {//找到离当前tab最近的元素
+                        offsetVal += $(tabElement).outerWidth(true);
+                        tabElement = $(tabElement).next();
+                    }
+                    offsetVal = 0;
+                    if (calSumWidth($(tabElement).prevAll()) > visibleWidth) {
+                        while ((offsetVal + $(tabElement).outerWidth(true)) < (visibleWidth) && tabElement.length > 0) {
+                            offsetVal += $(tabElement).outerWidth(true);
+                            tabElement = $(tabElement).prev();
+                        }
+                        scrollVal = calSumWidth($(tabElement).prevAll());
+                    }
+                }
+                $('.page-tabs-content').animate({
+                    marginLeft: 0 - scrollVal + 'px'
+                }, "fast");
+            }
+            //查看右侧隐藏的选项卡
+            function scrollTabRight() {
+                var marginLeftVal = Math.abs(parseInt($('.page-tabs-content').css('margin-left')));
+                // 可视区域非tab宽度
+                var tabOuterWidth = calSumWidth($(".content-tabs").children().not(".J_menuTabs"));
+                //可视区域tab宽度
+                var visibleWidth = $(".content-tabs").outerWidth(true) - tabOuterWidth;
+                //实际滚动宽度
+                var scrollVal = 0;
+                if ($(".page-tabs-content").width() < visibleWidth) {
+                    return false;
+                } else {
+                    var tabElement = $(".J_menuTab:first");
+                    var offsetVal = 0;
+                    while ((offsetVal + $(tabElement).outerWidth(true)) <= marginLeftVal) {//找到离当前tab最近的元素
+                        offsetVal += $(tabElement).outerWidth(true);
+                        tabElement = $(tabElement).next();
+                    }
+                    offsetVal = 0;
+                    while ((offsetVal + $(tabElement).outerWidth(true)) < (visibleWidth) && tabElement.length > 0) {
+                        offsetVal += $(tabElement).outerWidth(true);
+                        tabElement = $(tabElement).next();
+                    }
+                    scrollVal = calSumWidth($(tabElement).prevAll());
+                    if (scrollVal > 0) {
+                        $('.page-tabs-content').animate({
+                            marginLeft: 0 - scrollVal + 'px'
+                        }, "fast");
+                    }
+                }
+            }
+
+            //通过遍历给菜单项加上data-index属性
+            $(".J_menuItem").each(function (index) {
+                if (!$(this).attr('data-index')) {
+                    $(this).attr('data-index', index);
+                }
+            });
+
+            function menuItem() {
+                // 获取标识数据
+                var dataUrl = $(this).attr('href'),
+                    dataIndex = $(this).data('index'),
+                    menuName = $.trim($(this).text()),
+                    flag = true;
+                if (dataUrl == undefined || $.trim(dataUrl).length == 0)return false;
+
+                // 选项卡菜单已存在
+                $('.J_menuTab').each(function () {
+                    if ($(this).data('id') == dataUrl) {
+                        if (!$(this).hasClass('active')) {
+                            $(this).addClass('active').siblings('.J_menuTab').removeClass('active');
+                            scrollToTab(this);
+                            // 显示tab对应的内容区
+                            $('.J_mainContent .J_iframe').each(function () {
+                                if ($(this).data('id') == dataUrl) {
+                                    $(this).show().siblings('.J_iframe').hide();
+                                    return false;
+                                }
+                            });
+                        }
+                        flag = false;
+                        return false;
+                    }
+                });
+
+                // 选项卡菜单不存在
+                if (flag) {
+                    var str = '<a href="javascript:;" class="active J_menuTab" data-id="' + dataUrl + '">' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+                    $('.J_menuTab').removeClass('active');
+
+                    // 添加选项卡对应的iframe
+                    var str1 = '<iframe class="J_iframe" name="iframe' + dataIndex + '" width="100%" height="100%" src="' + dataUrl + '" frameborder="0" data-id="' + dataUrl + '" seamless></iframe>';
+                    $('.J_mainContent').find('iframe.J_iframe').hide().parents('.J_mainContent').append(str1);
+
+                    // 添加选项卡
+                    $('.J_menuTabs .page-tabs-content').append(str);
+                    scrollToTab($('.J_menuTab.active'));
+                }
+                return false;
+            }
+
+            $('.J_menuItem').on('click', menuItem);
+
+            // 关闭选项卡菜单
+            function closeTab() {
+                var closeTabId = $(this).parents('.J_menuTab').data('id');
+                var currentWidth = $(this).parents('.J_menuTab').width();
+
+                // 当前元素处于活动状态
+                if ($(this).parents('.J_menuTab').hasClass('active')) {
+
+                    // 当前元素后面有同辈元素，使后面的一个元素处于活动状态
+                    if ($(this).parents('.J_menuTab').next('.J_menuTab').size()) {
+
+                        var activeId = $(this).parents('.J_menuTab').next('.J_menuTab:eq(0)').data('id');
+                        $(this).parents('.J_menuTab').next('.J_menuTab:eq(0)').addClass('active');
+
+                        $('.J_mainContent .J_iframe').each(function () {
+                            if ($(this).data('id') == activeId) {
+                                $(this).show().siblings('.J_iframe').hide();
+                                return false;
+                            }
+                        });
+
+                        var marginLeftVal = parseInt($('.page-tabs-content').css('margin-left'));
+                        if (marginLeftVal < 0) {
+                            $('.page-tabs-content').animate({
+                                marginLeft: (marginLeftVal + currentWidth) + 'px'
+                            }, "fast");
+                        }
+
+                        //  移除当前选项卡
+                        $(this).parents('.J_menuTab').remove();
+
+                        // 移除tab对应的内容区
+                        $('.J_mainContent .J_iframe').each(function () {
+                            if ($(this).data('id') == closeTabId) {
+                                $(this).remove();
+                                return false;
+                            }
+                        });
+                    }
+
+                    // 当前元素后面没有同辈元素，使当前元素的上一个元素处于活动状态
+                    if ($(this).parents('.J_menuTab').prev('.J_menuTab').size()) {
+                        var activeId = $(this).parents('.J_menuTab').prev('.J_menuTab:last').data('id');
+                        $(this).parents('.J_menuTab').prev('.J_menuTab:last').addClass('active');
+                        $('.J_mainContent .J_iframe').each(function () {
+                            if ($(this).data('id') == activeId) {
+                                $(this).show().siblings('.J_iframe').hide();
+                                return false;
+                            }
+                        });
+
+                        //  移除当前选项卡
+                        $(this).parents('.J_menuTab').remove();
+
+                        // 移除tab对应的内容区
+                        $('.J_mainContent .J_iframe').each(function () {
+                            if ($(this).data('id') == closeTabId) {
+                                $(this).remove();
+                                return false;
+                            }
+                        });
+                    }
+                }
+                // 当前元素不处于活动状态
+                else {
+                    //  移除当前选项卡
+                    $(this).parents('.J_menuTab').remove();
+
+                    // 移除相应tab对应的内容区
+                    $('.J_mainContent .J_iframe').each(function () {
+                        if ($(this).data('id') == closeTabId) {
+                            $(this).remove();
+                            return false;
+                        }
+                    });
+                    scrollToTab($('.J_menuTab.active'));
+                }
+                return false;
+            }
+
+            $('.J_menuTabs').on('click', '.J_menuTab i', closeTab);
+
+            //关闭其他选项卡
+            function closeOtherTabs(){
+                $('.page-tabs-content').children("[data-id]").not(":first").not(".active").each(function () {
+                    $('.J_iframe[data-id="' + $(this).data('id') + '"]').remove();
+                    $(this).remove();
+                });
+                $('.page-tabs-content').css("margin-left", "0");
+            }
+            $('.J_tabCloseOther').on('click', closeOtherTabs);
+
+            //滚动到已激活的选项卡
+            function showActiveTab(){
+                scrollToTab($('.J_menuTab.active'));
+            }
+            $('.J_tabShowActive').on('click', showActiveTab);
+
+
+            // 点击选项卡菜单
+            function activeTab() {
+                if (!$(this).hasClass('active')) {
+                    var currentId = $(this).data('id');
+                    // 显示tab对应的内容区
+                    $('.J_mainContent .J_iframe').each(function () {
+                        if ($(this).data('id') == currentId) {
+                            $(this).show().siblings('.J_iframe').hide();
+                            return false;
+                        }
+                    });
+                    $(this).addClass('active').siblings('.J_menuTab').removeClass('active');
+                    scrollToTab(this);
+                }
+            }
+
+            $('.J_menuTabs').on('click', '.J_menuTab', activeTab);
+
+            //刷新iframe
+            function refreshTab() {
+                var target = $('.J_iframe[data-id="' + $(this).data('id') + '"]');
+                var url = target.attr('src');
+//        //显示loading提示
+//        var loading = layer.load();
+//        target.attr('src', url).load(function () {
+//            //关闭loading提示
+//            layer.close(loading);
+//        });
+            }
+
+            $('.J_menuTabs').on('dblclick', '.J_menuTab', refreshTab);
+
+            // 左移按扭
+            $('.J_tabLeft').on('click', scrollTabLeft);
+
+            // 右移按扭
+            $('.J_tabRight').on('click', scrollTabRight);
+
+            // 关闭全部
+            $('.J_tabCloseAll').on('click', function () {
+                $('.page-tabs-content').children("[data-id]").not(":first").each(function () {
+                    $('.J_iframe[data-id="' + $(this).data('id') + '"]').remove();
+                    $(this).remove();
+                });
+                $('.page-tabs-content').children("[data-id]:first").each(function () {
+                    $('.J_iframe[data-id="' + $(this).data('id') + '"]').show();
+                    $(this).addClass("active");
+                });
+                $('.page-tabs-content').css("margin-left", "0");
+            });
+
+        });
+
+    function queryData() {
+        $.post(
+            "/boot/jump/checkUser",
+            msg=>{
+                console.log(msg)
+                $("#strongName").text(msg.teaname)
+            },
+            "json"
+        );
+    }
+</script>
+</body>
+
+</html>

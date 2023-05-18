@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link th:href="@{/js/element-ui/index.css}" rel="stylesheet">
+    <title>公告列表</title>
+    <style>
+        .title1{
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .el-card{
+            height: 330px;
+            position: relative;
+        }
+        .time {
+            font-size: 13px;
+            color: #999;
+        }
+        .bottom{
+            position: absolute;
+            bottom: 3px;
+        }
+        .button {
+            padding: 0;
+            float: right;
+        }
+        .el-row{
+            flex: 1;
+        }
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <h1 style="font-size: 50px">公告列表</h1>
+    <el-row>
+        <el-col :xs="6" :sm="6" :md="6" :lg="6" :xl="6"
+                v-for="ann in announceList" :key="ann.id">
+            <el-card class="box-card" shadow="hover">
+                <div slot="header" class="clearfix">
+                    <span class="title1">{{ann.title}}</span>
+                    <el-button type="success" class="button" @click="changeres(ann.id,'del')">删除</el-button>
+                </div>
+                <div  class="text item">
+                    {{ann.content}}
+                </div>
+
+                <div class="bottom clearfix">
+                    <el-radio-group v-model="ann.res" size="small" @change="changeres(ann.id,ann.res)">
+                        <el-radio-button label="待批准"></el-radio-button>
+                        <el-radio-button label="通过"></el-radio-button>
+                        <el-radio-button label="拒绝"></el-radio-button>
+                    </el-radio-group>
+                    <hr>
+                    <time class="time"><i class="el-icon-date"></i>  {{ ann.createtime }} 到 {{ann.endtime}}</time>
+                    <br>
+                    <i class="el-icon-s-promotion"></i>接收者：{{ann.classes}}
+                    <br>
+                    <i class="el-icon-user-solid"></i>提出人：{{ann.teaname}}
+                </div>
+            </el-card>
+        </el-col>
+    </el-row>
+</div>
+<script th:src="@{/js/vue/vue.js}"></script>
+<script th:src="@{/js/element-ui/index.js}"></script>
+<script th:src="@{/js/axios/axios.js}"></script>
+<script>
+    Vue.config.productionTip = false
+    new Vue({
+        el: '#app',
+        data: {
+            user:{},
+            announceList:[],
+        },
+        methods:{
+            checkUser(){
+                axios.post("/boot/jump/checkUser").then(
+                    res => {
+                        this.user = res.data
+                        this.queryAllAnn()
+                    }
+                )
+            },
+            queryAllAnn(){
+
+                axios.post('/boot/announce/queryAnnByCheckid?id='+this.user.teaid).then(
+                    res => {
+                        this.announceList = res.data
+                        console.log(this.announceList)
+                    }
+                )
+            },
+            changeres(annid,annres){
+                if (annres == 'del'){
+                    this.$message({
+                        message: "删除成功",
+                        type: 'warning'
+                    });
+                    axios.post('/boot/announce/delAnn?id='+annid).then(
+                        res => {
+                            this.queryAllAnn()
+                        }
+                    )
+                }else {
+                    this.$message({
+                        message: "修改成功，以修改为："+annres,
+                        type: 'success'
+                    });
+                    axios.post('/boot/announce/updateAnn?id='+annid+'&res='+annres).then(
+                        res => {
+                            console.log(this.res)
+                        }
+                    )
+                }
+
+            }
+        },
+        mounted(){
+            this.checkUser()
+        }
+    })
+</script>
+</body>
+</html>

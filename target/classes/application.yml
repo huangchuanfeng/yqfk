@@ -1,0 +1,26 @@
+server:
+  servlet:
+    context-path: /boot
+  port: 8000
+spring:
+  thymeleaf:
+    cache: false
+    encoding: utf-8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/wkproject?serverTimezone=GMT
+    username: root
+    password: 336699
+
+    hikari:
+      maximum-pool-size: 50
+      connection-test-query: SELECT 1
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.wk.yqfk.bean
+pagehelper:
+  reasonable: true
+  helper-dialect: mysql
+logging:
+  level:
+    com.etoak.mapper: debug

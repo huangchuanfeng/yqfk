@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link th:href="@{/js/element-ui/index.css}" rel="stylesheet">
+    <title>出行</title>
+</head>
+<body>
+<div id="app">
+    <div style="width: 800px">
+        <h1 style="font-size: 50px">发起出行报备</h1>
+        <el-form
+                ref="form" :model="form" label-width="120px">
+            <el-form-item label="学号">
+                <el-input v-model="form.stuid" placeholder="请输入您的学号" :readonly="true"></el-input>
+            </el-form-item>
+
+
+            <el-form-item label="出行理由">
+                <el-input v-model="form.reason" placeholder="请输入您的出行理由"></el-input>
+            </el-form-item>
+
+            <el-form-item label="出行时间">
+                <div class="block">
+                    <el-date-picker
+                            v-model="date1"
+                            value-format="yyyy-MM-dd HH:mm:ss"
+                            type="datetimerange"
+                            range-separator="至"
+                            start-placeholder="开始日期"
+                            end-placeholder="结束日期">
+                    </el-date-picker>
+                </div>
+            </el-form-item>
+            <el-form-item label="目的地">
+                <el-select v-model="form.sheng" placeholder="请选择目的地省份" @change="queryCityByProvince(form.sheng)">
+                    <el-option v-for="p in loc.sheng" :key="p.id"
+                               :label="p.name" :value="p.name">
+
+                    </el-option>
+
+                </el-select>
+                <el-select v-model="form.shi" placeholder="请选择目的地城市" @change="queryAreaByCityName(form.shi)">
+                    <el-option v-for="c in loc.shi" :key="c.id"
+                               :label="c.name" :value="c.name">
+
+                    </el-option>
+                </el-select>
+                <el-select v-model="form.qu" placeholder="请选择目的地区县">
+                    <el-option v-for="q in loc.qu" :key="q.id"
+                               :label="q.name" :value="q.name">
+
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="街道/小区地址">
+                <el-input v-model="form.home" placeholder="请输入您的具体地址"></el-input>
+            </el-form-item>
+            <el-form-item label="目的地风险">
+                <el-radio-group v-model="form.dan" size="small" >
+                    <el-radio-button label="低风险"></el-radio-button>
+                    <el-radio-button label="中风险"></el-radio-button>
+                    <el-radio-button label="高风险"></el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+
+
+            <el-form-item label="联系电话">
+                <el-input v-model="form.phone" placeholder="请输入您的联系电话"></el-input>
+            </el-form-item>
+
+            <el-form-item label="紧急联系电话">
+                <el-input v-model="form.danphone" placeholder="请输入您紧急联系人的联系电话"></el-input>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button type="primary" @click="onSubmit">立即创建</el-button>
+                <el-button>取消</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</div>
+<script th:src="@{/js/vue/vue.js}"></script>
+<script th:src="@{/js/element-ui/index.js}"></script>
+<script th:src="@{/js/axios/axios.js}"></script>
+
+<script>
+
+    Vue.config.productionTip = false
+    new Vue({
+        el: '#app',
+        data: {
+            user:{},
+            date1:'',
+            form:{
+                stuid:'',
+                stuname:'',
+                reason:'',
+                createtime:'',
+                endtime:'',
+                dan:'',
+                phone:'',
+                danphone:'',
+                sheng:'',
+                shi:'',
+                qu:'',
+                home:'',
+                classes:'',
+            },
+            loc:{
+                sheng:'',
+                shi:'',
+                qu:'',
+                home:'',
+            }
+        },
+        methods: {
+            checkUser(){
+                axios.post("/boot/jump/checkUser").then(
+                    res => {
+                        this.user = res.data
+                        console.log(this.user)
+                        this.form.stuid = this.user.number
+                        this.form.stuname = this.user.name
+                        this.form.classes = this.user.classes
+                    }
+                )
+            },
+            onSubmit(){
+                this.form.createtime = this.date1[0]
+                this.form.endtime = this.date1[1]
+                axios.post("/boot/announce/addTrip?"
+                    +"stuid="+this.form.stuid
+                    +"&stuname="+this.form.stuname
+                    +"&phone="+this.form.phone
+                    +"&sheng="+this.form.sheng
+                    +"&shi="+this.form.shi
+                    +"&qu="+this.form.qu
+                    +"&home="+this.form.home
+                    +"&danger="+this.form.dan
+                    +"&createtime="+this.form.createtime
+                    +"&endtime="+this.form.endtime
+                    +"&reason="+this.form.reason
+                    +"&danphone="+this.form.danphone
+                    +"&classes="+this.form.classes
+                ).then(res => {
+                    this.$message({
+                        message: "提交成功",
+                        type: 'success'
+                    });
+                    for(let key in this.form){
+                        this.form[key]  = ''
+                    }
+                })
+            },
+            queryAllProvince() {
+                axios.post("/boot/user/sheng?").then(res => {
+                    this.loc.sheng = res.data
+                })
+            },
+            //根据省的名字查询城市
+            queryCityByProvince(proname) {
+                this.form.shi = ''
+                this.form.qu = ''
+                axios.post("/boot/user/shi?proname="+proname).then(res => {
+                    this.loc.shi = res.data
+                })
+            },
+            queryAreaByCityName(cityname) {
+                this.form.qu = ''
+                axios.post("/boot/user/qu?cityname="+cityname).then(res => {
+                    this.loc.qu = res.data
+                })
+            },
+        },
+        mounted(){
+            this.checkUser()
+            this.queryAllProvince()
+
+        }
+
+    })
+</script>
+</body>
+</html>

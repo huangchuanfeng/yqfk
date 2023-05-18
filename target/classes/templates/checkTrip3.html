@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link th:href="@{/js/element-ui/index.css}" rel="stylesheet">
+    <title>学生出行审核</title>
+
+
+</head>
+<body>
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <img th:src="@{/img/head.png}" width="100%" height="300px" >
+    </div>
+</div>
+<div id="app">
+    <el-table class="middel" width="500px" :data="list" border
+              highlight-current-row max-height="400px" >
+        <el-table-column align="center" type="index" label="序号"></el-table-column>
+        <el-table-column align="center" prop="stuname" label="姓名" width="100px"></el-table-column>
+        <el-table-column align="center" prop="classes" label="班级" width="180px"></el-table-column>
+        <el-table-column align="center" prop="reason" label="缘由"></el-table-column>
+        <el-table-column align="center" prop="sheng" label="目的地" width="300px">
+            <template slot-scope="scope">
+                {{scope.row.sheng}}-{{scope.row.shi}}-{{scope.row.qu}}-{{scope.row.home}}
+            </template>
+        </el-table-column>
+        <el-table-column align="center" prop="status" label="状态" width="70px"></el-table-column>
+        <el-table-column align="center" prop="rereason" label="拒绝原因">
+            <template slot-scope="scope">
+                {{scope.row.rereason==null||scope.row.rereason==''?"暂无":scope.row.rereason}}
+            </template>
+        </el-table-column>
+        <el-table-column align="center" prop="createtime" label="出行时间" width="350px">
+            <template slot-scope="scope">
+                {{scope.row.createtime.substr(2)}}--{{scope.row.endtime.substr(2)}}
+            </template>
+        </el-table-column>
+        <!--<el-table-column align="center" prop="createtime" label="开始时间" width="70px">
+            <template slot-scope="scope">
+                &lt;!&ndash; 通过scope.row 可以拿取一行的数据
+                通过scope.row.属性名  可以拿取这个对象某个属性的数据 &ndash;&gt;
+                {{scope.row.gender ===0?'男':'女'}}
+            </template>
+        </el-table-column>-->
+        <el-table-column align="center" prop="phone" label="联系电话" width="180px"></el-table-column>
+        <el-table-column align="center" prop="danphone" label="紧急联系电话" width="180px"></el-table-column>
+        <el-table-column label="操作" align="center" width="150px" fixed="right">
+            <template slot-scope="scope">
+                <el-button type="primary" size="mini" :disabled="scope.row.status=='二级管理员通过' || scope.row.status=='二级管理员拒绝'"
+                           @click="changeStatus(scope.row.number,'三级管理员通过')">
+                    <i class="el-icon-check"></i>
+                </el-button>
+                <el-button type="danger" size="mini" :disabled="scope.row.status=='二级管理员通过' || scope.row.status=='二级管理员拒绝'"
+                           @click="changeStatus(scope.row.number,'三级管理员拒绝')">
+                    <i class="el-icon-close"></i>
+                </el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+
+    <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="page"
+            :page-sizes="[10, 15, 30, 50]"
+            :page-size="itemsPerPage"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total" class="buttom">
+    </el-pagination>
+
+    <el-dialog title="拒绝理由" :visible.sync="dialogTableVisible">
+        <input type="hidden" name="number" :model="form.number">
+        <el-form :model="form">
+                <el-input v-model="form.rereason" autocomplete="off"></el-input>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogTableVisible = false" >取 消</el-button>
+            <el-button type="primary" @click="TJLY()">确 定</el-button>
+        </div>
+    </el-dialog>
+</div>
+<script th:src="@{/js/vue/vue.js}"></script>
+<script th:src="@{/js/element-ui/index.js}"></script>
+<script th:src="@{/js/axios/axios.js}"></script>
+<script>
+    Vue.config.productionTip = false
+    new Vue({
+        el: '#app',
+        data: {
+            page:1,
+            itemsPerPage:10,
+            total:0,
+            allPage:0,
+            list:[],
+            dialogTableVisible:false,
+            user:{},
+            form:{
+                rereason:'',
+                number:'',
+            }
+        },
+        methods:{
+            checkUser(){
+                axios.post("/boot/jump/checkUser").then(
+                    res => {
+                        this.user = res.data
+                        console.log(this.user)
+                        this.queryAllAnn()
+                    }
+                )
+            },
+            queryAllAnn(){
+                axios.post('/boot/announce/queryTrip?teaid='+this.user.teaid+"&level="+this.user.level).then(
+                    res => {
+                        this.list = res.data.rows
+                        console.log(res)
+                        this.total = res.data.total
+                    }
+                )
+            },
+            handleSizeChange(val) {
+                /* 当"每页记录数"发生改变时 触发  val为更改后的每页记录数 */
+                this.itemsPerPage = val
+                this.fetchData()
+            },
+
+            /* 当前页改变 激发 */
+            handleCurrentChange(val) {
+                this.page = val
+                this.fetchData()
+            },
+
+            changeStatus(number,status){
+                let aim = '/boot/announce/updateTrip?number='+number+"&status="+status
+                if (status == '三级管理员拒绝'){
+                    this.openDialog(number)
+
+                }else {
+                    axios.post(aim+"&rereason=清空").then(
+                        res => {
+                            this.$message({
+                                message: "修改成功",
+                                type: 'success'
+                            });
+                            this.checkUser()
+                        }
+                    )
+                }
+
+            },
+            openDialog(number){
+                this.form.rereason=''
+                this.form.number = number
+                this.dialogTableVisible = true
+            },
+            TJLY(){
+                axios.post('/boot/announce/updateTrip?number='+this.form.number+"&status=三级管理员拒绝"+"&rereason="+this.form.rereason).then(
+                    res => {
+                        this.dialogTableVisible = false
+                        this.$message({
+                            message: "修改成功",
+                            type: 'success'
+                        });
+                        this.checkUser()
+                    }
+                )
+            }
+
+        },
+        mounted(){
+            this.checkUser()
+        }
+    })
+</script>
+</body>
+</html>

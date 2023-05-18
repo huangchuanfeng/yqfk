@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="utf-8">
+    <link th:href="@{/js/bootstrap/css/bootstrap.min.css}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <title>H+ 后台主题UI框架 - 空白页</title>
+    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+    <link rel="shortcut icon" href="favicon.ico">
+    <link th:href="@{/css/bootstrap.min.css?v=3.3.6}" rel="stylesheet">
+    <link th:href="@{/css/font-awesome.css?v=4.4.0}" rel="stylesheet">
+
+    <link th:href="@{/css/animate.css}" rel="stylesheet">
+    <link th:href="@{/css/style.css?v=4.1.0}" rel="stylesheet">
+
+</head>
+
+<body class="gray-bg">
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <img th:src="@{/img/welcomeHead.jpg}" width="100%" height="300px">
+    </div>
+</div>
+
+
+<div id="app">
+    <div class="panel-group" id="accordion2" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="headingOne2">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        全国疫情确诊累计数量可视化
+                    </a>
+                </h4>
+            </div>
+
+            <div id="collapseOne2" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                <div class="panel-body">
+                    <div class="container">
+                        <!--为echarts准备一个dom容器-->
+                        <div id="myEcharts" style="width: 1000px;height: 500px"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 全局js -->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/echarts.js}"></script>
+<script th:src="@{/js/axios/axios.js}"></script>
+<script th:src="@{/js/china.js}"></script>
+
+<script>
+    //初始化echarts实例
+    var myChart = echarts.init(document.getElementById('myEcharts'));
+    // 指定图表的配置项和数据
+    let option = {
+        title: {
+            text: "中国疫情分布图",
+            left: 400, //设置标题的距离盒子左边的距离
+            top: 100 //设置标题距离盒子顶部的距离
+        },
+
+        series: [
+            {
+                name: "确诊人数", //控制鼠标hover上去显示的固定文本
+                type: "map", //告诉echarts需要渲染一个地图
+                mapType: "china", //告诉echarts要渲染注册的china地图
+                label: {
+                    show: true, //控制是否显示省份的名称
+                    color: "white" // 设置显示每个省份的字体颜色
+                },
+                itemStyle: {
+                    borderColor: "green" //每个省份的边界的颜色
+                },
+                emphasis: { //控制鼠标移入的版块的颜色
+                    color: "#fff", //移入该模块的字体颜色
+                    itemStyle: {
+                        areaColor: "#83b5e7", //鼠标hover到模块上的背景色
+                    }
+                },
+                zoom: 1.2, //控制整个地图的缩放倍数
+                data: [] //每个板块的数据
+            }
+        ],
+        visualMap: {
+            type: "piecewise", //左下角的分段显示
+            show: true,
+            splitNumber: 4, //显示几个分段
+            pieces: [ //左下角的自定义分段显示
+                {min: 15000},
+                {min: 900, max: 15000},
+                {min: 310, max: 900},
+                {min: 200, max: 310},
+                {min: 0, max: 200}],
+
+            
+            inRange: {
+                symbol: "circle", //控制分段图片显示为一个圆圈
+                color: ["#ffc0b1", "#9c0505"] //控制红色到蓝色
+            }
+        },
+        toolbox: {
+            show: true,
+            orient: "vertical",
+            left: "right",
+            top: "center",
+            feature: {
+                mark: { show: true },
+                dataView: { show: true, readOnly: false },
+                restore: { show: true },
+                saveAsImage: { show: true },
+            },
+        },
+        tooltip: { //控制鼠标hover上去显示信息
+            trigger: "item",
+            formatter: function(params) { //自定义悬浮窗的显示内容
+                return params.name + "<br/>" + params.seriesName+"："+params.value
+            }
+        },
+    }
+    //使用指定的配置项和数据显示图表
+    myChart.setOption(option);
+
+    function getData() {
+        $.ajax({
+            url: "https://interface.sina.cn/news/wap/fymap2020_data.d.json?_=1580892522427",
+            dataType: "jsonp",
+            success: function (data) {
+                //  console.log(data.data)
+                let res = data.data.list
+
+                console.log(res);
+
+                var newArr = [];
+                if (res) {
+                    let list = data.data.list.map(item => ({name: item.name, value: item.value}))
+                    console.log(list)
+                    myChart.setOption({
+                        series: [{
+                            name: '确诊数',
+                            type: 'map',
+                            mapType: 'china',
+                            roam: false,
+                            label: {
+                                show: true,
+                                color: 'rgb(249, 249, 249)'
+                            },
+                            data: list
+                        }]
+                    });
+                }
+            }
+
+        })
+    }
+    getData();
+</script>
+
+
+
+
+</body>
+
+</html>
